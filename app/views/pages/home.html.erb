@@ -51,8 +51,9 @@ name = nicknames.sample
 
 require 'json'
 require 'open-uri'
+require_relative './api_key.rb'
 
-key_api = "bb49fc765c963e47350d9cebc13cf2dc"
+key_api = $api_key
 
 def get_coord(key, city)
     
@@ -131,14 +132,15 @@ else
     end
 end
 %>
-
-<h1>Hallo <%= name %>, <%= phrase %></h1>
-<h2>In Barcelona sind <%= degrees_barca%> Grad!</h2>
-<a>
-         <img alt="weather" src=<%= icon_barca %>>
-</a>
-<h2>In Friedrichshafen sind <%= degrees_barca%> Grad!</h2>
-<a>
-         <img alt="weather" src=<%= icon_fn %>>
-</a>
-<p>Wir sind seit <%= year %> Jahren, <%= month%> Monaten und <%= day %> Tagen zusammen! </p>
+<body>
+    <h1>Hallo <%= name %>, <%= phrase %></h1>
+    <h2>In Barcelona sind <%= degrees_barca%> Grad!</h2>
+    <a>
+            <img alt="weather" src=<%= icon_barca %>>
+    </a>
+    <h2>In Friedrichshafen sind <%= degrees_barca%> Grad!</h2>
+    <a>
+            <img alt="weather" src=<%= icon_fn %>>
+    </a>
+    <p>Wir sind seit <%= year %> Jahren, <%= month%> Monaten und <%= day %> Tagen zusammen! </p>
+<body>

@@ -26,3 +26,7 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+/app/views/pages/api_key.rb
+
+.api_key.rb
