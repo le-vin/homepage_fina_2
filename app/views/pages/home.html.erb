@@ -1,1 +1,144 @@
 <h1>Our first view 🚀</h1>
+  
+<% require 'date' 
+day = Date.today.strftime("%A") %>
+<%
+if day == "Monday"
+    mon_phrases = ["ich wünsche dir einen ganz wunderbaren Start in die Woche!",
+                    "hab einen schönen Montag",
+                    "hab einen schönen Start in die Woche!"]
+    phrase = mon_phrases.sample
+elsif day == "Tuesday" 
+    tue_phrases = ["ich schicke dir einen dicken Kuss!",
+                    "fühl dich ganz fest gedrückt!",
+                    "habe eine schönen Dienstag!"]
+    phrase = tue_phrases.sample
+elsif day == "Wednesday"
+    wed_phrases = ["ich wünsche dir einen ereignisreichen Mittwoch!",
+                    "genieß deinen Mittwoch!",
+                    "fühl dich ganz fest umarmt!", 
+                    "die Hälfte der Woche ist vorüber!"]
+    phrase = wed_phrases.sample
+elsif day == "Thursday"
+    thurs_phrases = ["das Wochenende naht!",
+                    "genieß deinen Donnerstag!",
+                    "fühl dich fest gekuschelt!"]
+    phrase = thurs_phrases.sample
+elsif day == "Friday"
+    fri_phrases = ["juhu! Gleich ist Wochenende!",
+                    "nur noch ein paar Stunden bis ins Wochenende!",
+                    "ich hoffe du hast einen wunderschönen Freitag!"]
+    phrase = fri_phrases.sample
+elsif day == "Saturday"
+    sat_phrases = ["hoch die Hände, Wochenende!",
+                    "ich hoffe du hast schöne Wochenendpläne!",
+                    "nutz das Wochenende um ordentlich zu entspannen!"]
+    phrase = sat_phrases.sample
+elsif day == "Sunday"
+    sun_phrases = ["Sonntag ist Kuscheltag!",
+                    "erhol dich gut an diesem Sonntag!",
+                    "heute vielleicht ein Tatort-Abend?"]
+    phrase = sun_phrases.sample
+end
+%>
+
+<%
+nicknames = ["mein Schatz", "Schnups", "Schnupsi", "Bambi", "Butzel"]
+name = nicknames.sample
+%>
+
+<%
+
+require 'json'
+require 'open-uri'
+
+key_api = "bb49fc765c963e47350d9cebc13cf2dc"
+
+def get_coord(key, city)
+    
+    url = "http://api.openweathermap.org/geo/1.0/direct?q=#{city}&limit=1&appid=" + key
+    
+    file = open(url)
+    contents = file.read
+    
+    lat_coord = JSON.parse(contents)[0]["lat"]
+    lon_coord = JSON.parse(contents)[0]["lon"]
+
+    return [lat_coord, lon_coord]
+end
+
+barca_coord = get_coord(key_api, "Barcelona")
+fn_coord = get_coord(key_api, "Friedrichshafen")
+
+
+# WEATHER API CALL
+
+def get_weather(key, lat, lon)
+
+    url_weather = "https://api.openweathermap.org/data/2.5/onecall?lat=#{lat}&lon=#{lon}&exclude=current,minutely,hourly,alerts&appid=#{key}"
+    file = open(url_weather)
+    contents = file.read
+    weather_kalvin = JSON.parse(contents)["daily"][0]["temp"]["day"]
+    weather_celsius = (weather_kalvin-273.15).round
+    icon_id = JSON.parse(contents)["daily"][0]["weather"][0]["icon"]
+    
+    return [weather_celsius, icon_id]
+end 
+barca_data = get_weather(key_api, barca_coord[0], barca_coord[1])
+fn_data = get_weather(key_api, fn_coord[0], fn_coord[1])
+
+degrees_barca = barca_data[0]
+icon_barca = "https://openweathermap.org/img/wn/#{barca_data[1]}@2x.png"
+
+
+degrees_fn = fn_data[0]
+icon_fn = "https://openweathermap.org/img/wn/#{fn_data[1]}@2x.png"
+
+%>
+
+<%
+anniversary = Date.new(2020,6,20)
+today = Date.today
+
+if anniversary.day > today.day
+    day = anniversary.day - today.day
+    if today.month <= anniversary.month
+        month_range = today.month - anniversary.month - 1
+        year = today.year - anniversary.year - 1
+        month = 12 + month_range
+    else
+        month_range = today.month - anniversary.month
+        year = today.year - anniversary.year
+        month = 12 - month_range -1
+    end
+elsif anniversary.day == today.day
+    day = 0
+    month = today.month - anniversary.month
+    if month < 0
+        year = today.year - anniversary.year - 1
+        month = 12 - month
+    else 
+        year = today.year - anniversary.year
+    end
+else
+    day = today.day - anniversary.day
+    month = today.month - anniversary.month
+    if month < 0
+        year = today.year - anniversary.year - 1
+        month = 12 - month
+    else 
+        year = today.year - anniversary.year
+    end
+end
+%>
+
+<h1>Hallo <%= name %>, <%= phrase %></h1>
+<h2>In Barcelona sind <%= degrees_barca%> Grad!</h2>
+<a>
+         <img alt="weather" src=<%= icon_barca %>>
+</a>
+<h2>In Friedrichshafen sind <%= degrees_barca%> Grad!</h2>
+<a>
+         <img alt="weather" src=<%= icon_fn %>>
+</a>
+<p>Wir sind seit <%= year %> Jahren, <%= month%> Monaten und <%= day %> Tagen zusammen! </p>
